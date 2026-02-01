@@ -1,1 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>BestFriend Proposal</title>
+
+    <style>
+      * {
+        box-sizing: border-box;
+        font-family: "Segoe UI", sans-serif;
+      }
+
+      body {
+        margin: 0;
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: radial-gradient(circle at top, #1f2937, #020617);
+      }
+
+      #card {
+        position: relative;
+        width: 380px;
+        height: 280px;
+        background: linear-gradient(145deg, #111827, #1f2937);
+        border-radius: 18px;
+        padding: 24px;
+        color: white;
+        text-align: center;
+        box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6);
+      }
+
+      h2 {
+        margin-top: 0;
+        font-weight: 600;
+      }
+
+      .btn {
+        width: 80px;
+        height: 43px;
+        border: none;
+        border-radius: 22px;
+        font-size: 16px;
+        cursor: pointer;
+      }
+
+      #yes {
+        background: linear-gradient(135deg, #22c55e, #16a34a);
+        color: white;
+      }
+
+      #no {
+        position: absolute;
+        background: linear-gradient(135deg, #ef4444, #dc2626);
+        color: white;
+      }
+
+      .buttons {
+        margin-top: 40px;
+        display: flex;
+        justify-content: space-between;
+        padding: 0 20px;
+        width: 260px;
+      }
+
+      /* WhatsApp Form */
+      .whatsapp-input {
+        width: 70%;
+        padding: 13px 15px;
+        font-size: 1.1rem;
+        border: none;
+        border-radius: 25px;
+        text-align: center;
+        margin-bottom: 20px;
+        background: rgba(255, 255, 255, 0.95);
+        color: #333;
+        font-weight: 500;
+      }
+
+      .whatsapp-btn {
+        padding: 10px 22px;
+        border-radius: 50px;
+        border: none;
+        font-weight: 700;
+        cursor: not-allowed;
+        background: rgba(255, 255, 255, 0.4);
+        color: #0f5132;
+        transition: all 0.3s ease;
+      }
+
+      .whatsapp-btn:disabled {
+        opacity: 0.6;
+      }
+	  .mt-0{
+		margin-top: 0;
+	  }
+	  .mb-0{
+		margin-bottom: 0;
+	  }
+    </style>
+  </head>
+
+  <body>
+    <div id="card">
+      <h2>Roshani ❤️</h2>
+      <p>Will you be my best friend forever? </p>
+	<p>You've made every day brighter with your amazing smile and kind heart!❤️</p>
+        
+
+      <div class="buttons">
+		<div>
+			<button id="yes" class="btn">Yes 💖</button>
+		</div>
+		<div>
+			<button id="no" class="btn">No 😅</button>
+		</div>
+      </div>
+    </div>
+
+    <script>
+      const card = document.getElementById("card");
+      const noBtn = document.getElementById("no");
+      const yesBtn = document.getElementById("yes");
+
+      const SAFE_DISTANCE = 90;
+      let escapeEnabled = false;
+
+      card.addEventListener("mouseenter", () => {
+        if (!escapeEnabled) {
+          enableEscapeMode();
+          escapeEnabled = true;
+        }
+      });
+
+      document.addEventListener("mousemove", (e) => {
+        if (!escapeEnabled) return;
+
+        const cardRect = card.getBoundingClientRect();
+        const btnRect = noBtn.getBoundingClientRect();
+
+        if (
+          e.clientX < cardRect.left ||
+          e.clientX > cardRect.right ||
+          e.clientY < cardRect.top ||
+          e.clientY > cardRect.bottom
+        )
+          return;
+
+        const bx = btnRect.left + btnRect.width / 2;
+        const by = btnRect.top + btnRect.height / 2;
+
+        const dx = e.clientX - bx;
+        const dy = e.clientY - by;
+
+        if (Math.hypot(dx, dy) < SAFE_DISTANCE) {
+          placeNoButton();
+        }
+      });
+
+      function enableEscapeMode() {
+        noBtn.style.position = "absolute";
+        const rect = noBtn.getBoundingClientRect();
+        const cardRect = card.getBoundingClientRect();
+
+        noBtn.style.left = rect.left - cardRect.left + "px";
+        noBtn.style.top = rect.top - cardRect.top + "px";
+      }
+
+      function placeNoButton() {
+        const maxX = card.clientWidth - noBtn.offsetWidth;
+        const maxY = card.clientHeight - noBtn.offsetHeight;
+
+        noBtn.style.left = Math.random() * maxX + "px";
+        noBtn.style.top = Math.random() * maxY + "px";
+      }
+
+      yesBtn.onclick = () => {
+        card.innerHTML = `
+          <h2>🎉 Yay Roshani! ❤️</h2>
+		  <p class="mb-0">Perfect! Now let's stay connected as best friends forever!</p>
+          <p class="mt-0">Can I have your WhatsApp number? 💚</p>
+
+          <input
+            type="tel"
+            id="whatsappNumber"
+            class="whatsapp-input"
+            placeholder="+91 98765 43210"
+            oninput="validateNumber()"
+          />
+
+          <br />
+
+          <button
+            id="saveBtn"
+            class="whatsapp-btn"
+            onclick="saveNumber()"
+            disabled
+          >
+            Save Number 💚
+          </button>
+        `;
+      };
+
+      function validateNumber() {
+        const input = document.getElementById("whatsappNumber");
+        const btn = document.getElementById("saveBtn");
+        const value = input.value.trim();
+
+        const mobileRegex = /^(\+91[\s-]?)?[6-9]\d{9}$/;
+
+        if (mobileRegex.test(value)) {
+          btn.disabled = false;
+          btn.style.background =
+            "linear-gradient(135deg, #25d366, #128c7e)";
+          btn.style.color = "white";
+          btn.style.cursor = "pointer";
+          input.style.border = "2px solid #22c55e";
+        } else {
+          btn.disabled = true;
+          btn.style.background = "rgba(255,255,255,0.4)";
+          btn.style.color = "#0f5132";
+          btn.style.cursor = "not-allowed";
+          input.style.border = "none";
+        }
+      }
+
+      function saveNumber() {
+        const input = document.getElementById("whatsappNumber");
+        const number = input.value.trim();
+
+        console.log("📱 WhatsApp Number Saved:", number);
+
+        const btn = document.getElementById("saveBtn");
+        btn.textContent = "✅ Saved!";
+        btn.disabled = true;
+
+        input.style.background = "rgba(74, 222, 128, 0.25)";
+
+        setTimeout(() => {
+          btn.textContent = "Save Number 💚";
+          input.style.background = "rgba(255,255,255,0.95)";
+        }, 2000);
+      }
+
+      document.addEventListener("keypress", (e) => {
+        if (
+          e.key === "Enter" &&
+          document.getElementById("saveBtn") &&
+          !document.getElementById("saveBtn").disabled
+        ) {
+          saveNumber();
+        }
+      });
+    </script>
+  </body>
+</html>
 
